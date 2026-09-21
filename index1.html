@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#000000">
     <title>Para Mi Princesa 🌻🍁</title>
     
     <style>
@@ -24,14 +25,25 @@
   --speed-leaf: 2s;
 }
 
+html {
+  height: 100%;
+  -webkit-text-size-adjust: 100%;
+}
+
 body {
   display: flex;
   align-items: flex-end;
   justify-content: center;
   min-height: 100vh;
+  min-height: 100dvh;
+  margin: 0;
   background-color: var(--dark-color);
   overflow: hidden;
+  overscroll-behavior: none;
   perspective: 1000px;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .night {
@@ -196,7 +208,8 @@ body {
 
 .flowers {
   position: relative;
-  transform: scale(0.7); /* Reducido de 0.9 a 0.7 */
+  transform: scale(var(--flowers-scale, 0.7));
+  transform-origin: bottom center;
   z-index: 2;
 }
 
@@ -732,13 +745,20 @@ body {
 /* New CSS for the text */
 .special-text {
     position: fixed;
-    top: 5%;
+    top: calc(env(safe-area-inset-top) + 4vh);
     left: 50%;
     transform: translateX(-50%);
+    width: min(92vw, 40ch);
+    text-align: center;
     color: #fff;
-    font-family: Arial, sans-serif;
-    font-size: 4vmin;
-    text-shadow: 0 0 1vmin rgba(255, 255, 255, 0.5);
+    font-family: "Quicksand", system-ui, -apple-system, Arial, sans-serif;
+    font-weight: 600;
+    font-size: clamp(1.05rem, 4.6vw, 2.2rem);
+    letter-spacing: 0.02em;
+    line-height: 1.35;
+    text-wrap: balance;
+    text-shadow: 0 0 1.2vmin rgba(255, 255, 255, 0.45),
+                 0 2px 12px rgba(0, 0, 0, 0.6);
     z-index: 10;
     opacity: 0;
     animation: fadeIn 3s 1s forwards;
@@ -761,6 +781,11 @@ body {
 
 .not-loaded * {
   animation-play-state: paused !important;
+}
+
+/* el fundido de entrada nunca se pausa */
+.not-loaded .page-enter {
+  animation-play-state: running !important;
 }
 
 /* KEYFRAMES */
@@ -961,13 +986,207 @@ body {
   0%, 100% { transform: scale(0.35) rotate(-45deg) rotateY(-120deg); }
   50% { transform: scale(0.35) rotate(-42deg) rotateY(-115deg); }
 }
+
+/* ============================================================
+   BOTÓN DE MÚSICA (flotante)
+   ============================================================ */
+.music-btn {
+  position: fixed;
+  right: calc(env(safe-area-inset-right) + 16px);
+  bottom: calc(env(safe-area-inset-bottom) + 16px);
+  z-index: 200;
+
+  width: 52px;
+  height: 52px;
+  display: grid;
+  place-items: center;
+  font-size: 22px;
+  line-height: 1;
+
+  border: 1px solid rgba(255, 215, 0, 0.35);
+  border-radius: 50%;
+  color: #fff;
+  background: rgba(20, 20, 20, 0.55);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5),
+              inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 180ms ease, background 250ms ease;
+}
+
+.music-btn:active {
+  transform: scale(0.92);
+}
+
+/* ============================================================
+   BOTÓN VOLVER A LA CARTA
+   ============================================================ */
+.back-btn {
+  position: fixed;
+  left: calc(env(safe-area-inset-left) + 16px);
+  bottom: calc(env(safe-area-inset-bottom) + 16px);
+  z-index: 200;
+
+  min-height: 52px;
+  padding: 0 18px 0 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  font-family: "Quicksand", system-ui, -apple-system, Arial, sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: #fff;
+
+  border: 1px solid rgba(255, 215, 0, 0.35);
+  border-radius: 999px;
+  background: rgba(20, 20, 20, 0.55);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5),
+              inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 180ms ease, background 250ms ease;
+}
+
+.back-btn .back-btn__icon {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.back-btn:active {
+  transform: scale(0.94);
+}
+
+.back-btn:focus-visible {
+  outline: 2px solid #ffd700;
+  outline-offset: 3px;
+}
+
+@media (hover: hover) {
+  .back-btn:hover {
+    background: rgba(40, 40, 40, 0.7);
+    transform: translateY(-2px);
+  }
+}
+
+/* Fundido al volver */
+.page-leave {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  background: #000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 500ms ease;
+}
+
+.page-leave.show {
+  opacity: 1;
+}
+
+/* invita a tocar cuando el navegador bloquea el audio */
+.music-btn.pulse {
+  animation: musicPulse 1.8s ease-in-out infinite;
+}
+
+@keyframes musicPulse {
+  0%, 100% { box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5), 0 0 0 0 rgba(255, 215, 0, 0.45); }
+  50% { box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5), 0 0 0 12px rgba(255, 215, 0, 0); }
+}
+
+.music-btn:focus-visible {
+  outline: 2px solid #ffd700;
+  outline-offset: 3px;
+}
+
+@media (hover: hover) {
+  .music-btn:hover {
+    background: rgba(40, 40, 40, 0.7);
+    transform: translateY(-2px);
+  }
+}
+
+/* ============================================================
+   ENTRADA SUAVE (continúa el fundido de la carta)
+   ============================================================ */
+.page-enter {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: #000;
+  pointer-events: none;
+  animation: pageEnter 900ms ease forwards;
+}
+
+@keyframes pageEnter {
+  0% { opacity: 1; }
+  100% { opacity: 0; visibility: hidden; }
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+/* Teléfonos en vertical: ramo ajustado al ancho de la pantalla */
+@media (max-width: 600px) {
+  .flowers { --flowers-scale: 0.72; }
+  .flower { bottom: 13vmin; }
+}
+
+@media (max-width: 380px) {
+  .flowers { --flowers-scale: 0.66; }
+}
+
+/* Teléfonos muy angostos: el botón de volver queda solo con el icono */
+@media (max-width: 359px) {
+  .back-btn {
+    width: 52px;
+    padding: 0;
+    justify-content: center;
+    gap: 0;
+  }
+  .back-btn span:not(.back-btn__icon) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+
+/* Pantallas bajitas / horizontal */
+@media (max-height: 520px) {
+  .flowers { --flowers-scale: 0.5; }
+  .special-text { top: calc(env(safe-area-inset-top) + 2vh); }
+  .music-btn { width: 44px; height: 44px; font-size: 18px; }
+  .back-btn { min-height: 44px; font-size: 13px; }
+}
+
+/* Escritorio */
+@media (min-width: 1024px) {
+  .flowers { --flowers-scale: 0.8; }
+}
     </style>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&display=swap">
 </head>
 
 <body class="not-loaded">
+  <div class="page-enter" aria-hidden="true"></div>
+
   <div class="night"></div>
-  
-  <div class="special-text">Estas flores son para ti ❤️🌻 </div>
+
+  <div class="special-text">Estas flores son para ti ❤️🌻</div>
   
 
   <div class="shooting-stars">
@@ -1321,31 +1540,71 @@ body {
     Tu navegador no soporta audio.
   </audio>
 
-  <!-- Botón flotante -->
-  <button id="music-toggle" class="music-btn">🔇</button>
+  <!-- Botón para volver a la carta -->
+  <button id="backToLetter" class="back-btn" type="button" aria-label="Volver a la carta">
+    <span class="back-btn__icon" aria-hidden="true">💌</span>
+    <span>Volver a la carta</span>
+  </button>
+
+  <!-- Fundido al volver -->
+  <div class="page-leave" id="pageLeave" aria-hidden="true"></div>
+
+  <!-- Botón flotante de música -->
+  <button id="music-toggle" class="music-btn" type="button" aria-label="Activar música">🔇</button>
 
   <script>
     const music = document.getElementById("bg-music");
     const toggleBtn = document.getElementById("music-toggle");
 
-    // Activar sonido tras el primer clic en cualquier parte
-    document.addEventListener("click", () => {
-      if (music.muted) {
-        music.muted = false;
-        music.play();
-        toggleBtn.textContent = "🎵";
+    function soundOn() {
+      music.muted = false;
+      const p = music.play();
+      if (p && p.then) {
+        p.then(() => {
+          toggleBtn.textContent = "🎵";
+          toggleBtn.classList.remove("pulse");
+          toggleBtn.setAttribute("aria-label", "Pausar música");
+        }).catch(() => {
+          // El navegador pidió un toque: invitamos con el botón
+          music.muted = true;
+          toggleBtn.classList.add("pulse");
+        });
       }
+    }
+
+    // Intento automático al entrar (viene de la carta, suele permitirse)
+    soundOn();
+
+    // Cualquier toque en la pantalla activa el sonido
+    document.addEventListener("click", () => {
+      if (music.muted || music.paused) soundOn();
     }, { once: true });
 
-    // Botón para play/pause
+    document.addEventListener("touchstart", () => {
+      if (music.muted || music.paused) soundOn();
+    }, { once: true, passive: true });
+
+    // Volver a la carta con fundido
+    const backBtn = document.getElementById("backToLetter");
+    const pageLeave = document.getElementById("pageLeave");
+
+    backBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      pageLeave.classList.add("show");
+      setTimeout(() => {
+        window.location.href = "index.html";
+      }, 420);
+    });
+
+    // Botón play / pause
     toggleBtn.addEventListener("click", (e) => {
       e.stopPropagation();
-      if (music.paused) {
-        music.play();
-        toggleBtn.textContent = "🎵";
+      if (music.paused || music.muted) {
+        soundOn();
       } else {
         music.pause();
         toggleBtn.textContent = "🔇";
+        toggleBtn.setAttribute("aria-label", "Reproducir música");
       }
     });
   </script>

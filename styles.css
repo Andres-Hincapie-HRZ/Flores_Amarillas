@@ -1,120 +1,157 @@
-@import url(https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&display=swap);
+@import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Dancing+Script:wght@600;700&display=swap");
 
+/* ============================================================
+   BASE
+   ============================================================ */
 *,
 ::before,
 ::after {
   box-sizing: border-box;
 }
 
+html {
+  height: 100%;
+  -webkit-text-size-adjust: 100%;
+}
+
 body {
-  font-family: "Quicksand", sans-serif;
-  background: linear-gradient(to bottom right, #000000, #000000, #000000);
-  color: #ff2222;
+  --paper: #fffaf3;
+  --ink: #b91300;
+  --gold-1: #ff8c00;
+  --gold-2: #ffd700;
+
+  margin: 0;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: calc(env(safe-area-inset-top) + 1rem)
+           calc(env(safe-area-inset-right) + 1rem)
+           calc(env(safe-area-inset-bottom) + 1rem)
+           calc(env(safe-area-inset-left) + 1rem);
+
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
-  margin: 0;
-  padding: 1rem;
-  margin-top: 50px;
+
+  font-family: "Quicksand", system-ui, -apple-system, sans-serif;
+  color: #ffe9e9;
+  background:
+    radial-gradient(ellipse 70% 55% at 50% 42%, rgba(255, 140, 0, 0.16), transparent 70%),
+    radial-gradient(ellipse 90% 60% at 50% 120%, rgba(185, 19, 0, 0.22), transparent 70%),
+    #070405;
+
   overflow: hidden;
+  overscroll-behavior: none;
   -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(1.75rem, 6vw, 2.75rem);
+  width: 100%;
+}
+
+/* ============================================================
+   SOBRE / CARTA
+   ============================================================ */
 .envelope {
-  --duration: 1000ms;
+  --duration: 900ms;
 
-  --shadow-width: calc(var(--envelope-width) * 0.85);
-  --shadow-blur: 15px;
+  /* Tamaño fluido: se adapta solo al ancho del teléfono */
+  --envelope-width: clamp(268px, 88vw, 560px);
+  --envelope-height: calc(var(--envelope-width) * 0.6);
 
-  --envelope-width: 300px;
-  --envelope-height: 175px;
-  --envelope-clr-bg: #d14d44;
-  --envelope-clr-bg-side: #c24e46;
-  --envelope-clr-bg-bottom: #e15349;
-  --envelope-clr-bg-top: #d14d44;
-  --envelope-clr-txt: #fff;
+  --envelope-clr-bg: #c8433b;
+  --envelope-clr-bg-side: #ae3b34;
+  --envelope-clr-bg-bottom: #d94b41;
+  --envelope-clr-bg-top: #b93c34;
+  --envelope-clr-txt: #fff3ef;
 
   --envelope-transform: rotateY(0deg);
-  --envelope-transform-hover: rotateY(180deg);
-  --evelope-rotate-delay: calc(var(--duration) / 1);
-  --evelope-rotate-delay-hover: 0ms;
+  --evelope-rotate-delay: var(--duration);
 
-  --letter-clr-bg: #fff;
-  --letter-clr-text: #b91300;
-  --letter-font-size: 1rem;
+  --letter-clr-bg: var(--paper);
+  --letter-clr-text: var(--ink);
+  --letter-font-size: clamp(1rem, 4.3vw, 1.6rem);
+  --letter-height: calc(var(--envelope-height) - 1.75rem);
+  /* la hoja nunca puede pasarse de la pantalla */
+  --letter-height-open: min(calc(var(--envelope-height) * 1.95), 56vh);
   --letter-delay: 0ms;
-  --letter-delay-hover: calc(var(--duration) * 1.25);
 
-  --letter-height: calc(var(--envelope-height) - 2rem);
-  --letter-height-hover: calc(var(--envelope-height) * 1.75);
+  /* el sobre baja un poco al abrirse para dejar sitio a la hoja */
+  --open-shift: 0px;
 
   --fold-rotate: rotateX(0deg);
-  --fold-zindex-hover: 0;
-  --fold-rotate-hover: rotateX(180deg);
+  --fold-zindex: 10;
   --fold-delay: calc(var(--duration) / 2);
-  --fold-delay-hover: calc(var(--duration) * .75);
 
-  --front-font-size: 1rem;
-  --snowman-width: 50px;
-  --bells-width: 30px;
+  --front-font-size: clamp(0.85rem, 3.3vw, 1.25rem);
 
   position: relative;
-  height: var(--envelope-height);
   width: var(--envelope-width);
-  perspective: 1000px;
+  height: var(--envelope-height);
+  perspective: 1400px;
   cursor: pointer;
+  touch-action: manipulation;
+  translate: 0 var(--open-shift);
+  transition: transform 350ms ease, translate var(--duration) ease-in-out;
+  transition-delay: 0ms, var(--letter-delay);
 }
 
-@media (min-width: 720px) {
-  .envelope {
-    --envelope-width: 600px;
-    --envelope-height: 350px;
-    --letter-font-size: 1.6rem;
-    --snowman-width: 130px;
-    --bells-width: 60px;
-    --front-font-size: 1.25rem;
-  }
+.envelope:active {
+  transform: scale(0.985);
 }
 
-/* sombra */
+.envelope:focus-visible {
+  outline: 2px solid var(--gold-2);
+  outline-offset: 10px;
+  border-radius: 4px;
+}
+
+/* sombra proyectada */
 .envelope::after {
   content: "";
   position: absolute;
-  top: 110%;
+  top: 104%;
   left: 50%;
-  width: var(--shadow-width);
-  height: 40px;
+  translate: -50% 0;
+  width: calc(var(--envelope-width) * 0.8);
+  height: clamp(18px, 5vw, 34px);
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.6);
+  filter: blur(clamp(10px, 3vw, 18px));
   transition: var(--duration) ease-in-out;
   transition-delay: var(--evelope-rotate-delay);
-  transform: var(--shadow-transform);
-  translate: -50% 0;
-  border-radius: 50%;
-  background: rgba(71, 5, 5, 0.432);
-  filter: blur(var(--shadow-blur));
+  transform: var(--shadow-transform, none);
+  pointer-events: none;
 }
 
-/* estado abierto al hacer click */
+/* estado abierto */
 .envelope.open {
-  --envelope-transform: var(--envelope-transform-hover, 0deg);
-  --evelope-rotate-delay: var(--evelope-rotate-delay-hover);
+  --envelope-transform: rotateY(180deg);
+  --evelope-rotate-delay: 0ms;
   --shadow-transform: rotateY(180deg);
-  --fold-rotate: var(--fold-rotate-hover);
-  --fold-delay: var(--fold-delay-hover);
-  --fold-zindex: var(--fold-zindex-hover);
-  --letter-height: var(--letter-height-hover);
-  --letter-delay: var(--letter-delay-hover);
+  --fold-rotate: rotateX(180deg);
+  --fold-delay: calc(var(--duration) * 0.75);
+  --fold-zindex: 0;
+  --letter-height: var(--letter-height-open);
+  --letter-delay: calc(var(--duration) * 1.25);
+  --open-shift: clamp(0px, 13vh, 130px);
+  cursor: default;
 }
 
 .envelope-inner {
   position: relative;
+  display: grid;
   width: 100%;
   height: 100%;
-  transition: var(--duration) ease-in-out;
-  transition-delay: var(--evelope-rotate-delay);
   transform-style: preserve-3d;
   transform: var(--envelope-transform);
-  display: grid;
+  transition: transform var(--duration) cubic-bezier(0.65, 0.05, 0.36, 1);
+  transition-delay: var(--evelope-rotate-delay);
 }
 
 .envelope-front,
@@ -123,45 +160,129 @@ body {
   grid-area: 1/1;
   width: 100%;
   height: 100%;
+  border-radius: 8px;
   background-color: var(--envelope-clr-bg);
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
   perspective: 1000px;
   isolation: isolate;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    inset 0 0 0 1px rgba(0, 0, 0, 0.12),
+    0 18px 40px -18px rgba(0, 0, 0, 0.85);
 }
 
+/* --- Frente --- */
 .envelope-front {
+  overflow: hidden; /* el reverso NO lleva overflow: la hoja debe poder salir */
   color: var(--envelope-clr-txt);
   display: grid;
   place-content: center;
-}
-.envelope-front .postage-stamp {
-  position: absolute;
-  top: 1em;
-  right: 0.5em;
-  width: 15%;
-}
-.envelope-front .address {
-  text-align: left;
-  font-size: var(--front-font-size);
-}
-.envelope-front .address > p > span:first-child {
-  font-family: system-ui;
-  font-weight: 200;
-}
-.envelope-front .address > p > span:last-of-type {
-  font-weight: 800;
+  background-image:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.14), transparent 45%),
+    linear-gradient(200deg, transparent 60%, rgba(0, 0, 0, 0.22));
 }
 
+/* textura fina de papel */
+.envelope-front::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.035) 0 1px, transparent 1px 3px),
+    repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.035) 0 1px, transparent 1px 3px);
+  pointer-events: none;
+}
+
+.envelope-front .postage-stamp {
+  position: absolute;
+  top: 0.8em;
+  right: 0.8em;
+  width: clamp(38px, 12%, 64px);
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  font-size: clamp(16px, 5vw, 28px);
+  line-height: 1;
+  color: #8a2f28;
+  background: #f7efe2;
+  border-radius: 2px;
+  padding: 3px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+}
+
+/* borde interior punteado, estilo estampilla */
+.envelope-front .postage-stamp::before {
+  content: "";
+  position: absolute;
+  inset: 3px;
+  border: 1px dashed rgba(138, 47, 40, 0.45);
+  border-radius: 1px;
+}
+
+.envelope-front .address {
+  position: relative;
+  z-index: 1;
+  text-align: left;
+  font-size: var(--front-font-size);
+  letter-spacing: 0.02em;
+  line-height: 1.5;
+  padding-inline: 1.25em;
+}
+
+.envelope-front .address p {
+  margin: 0.15em 0;
+  display: flex;
+  align-items: baseline;
+  gap: 0.6em;
+}
+
+.envelope-front .address span:first-child {
+  font-weight: 500;
+  opacity: 0.72;
+  font-size: 0.8em;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+
+.envelope-front .address span:last-child {
+  font-family: "Dancing Script", cursive;
+  font-weight: 700;
+  font-size: 1.5em;
+  color: #fff;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* sello de cera */
+.envelope-front .seal {
+  position: absolute;
+  bottom: 0.7em;
+  left: 50%;
+  translate: -50% 0;
+  width: clamp(34px, 11%, 56px);
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  font-size: clamp(14px, 4.2vw, 22px);
+  color: #ffe3d8;
+  background: radial-gradient(circle at 32% 28%, #f0685c, #98241d 70%);
+  box-shadow:
+    inset 0 0 6px rgba(0, 0, 0, 0.45),
+    0 3px 10px rgba(0, 0, 0, 0.45);
+}
+
+/* --- Reverso (pliegues) --- */
 .envelope-back {
   transform: rotateY(180deg);
 }
-/* pliegues */
+
 .envelope-back::after {
   content: "";
   position: absolute;
   inset: 0;
   z-index: 3;
+  border-radius: inherit;
   background-image: conic-gradient(
     transparent 60deg,
     var(--envelope-clr-bg-side) 60deg 120deg,
@@ -170,128 +291,213 @@ body {
     transparent 300deg
   );
 }
+
 .envelope-back .top-fold {
   position: absolute;
   inset: 0;
-  z-index: var(--fold-zindex, 10);
+  border-radius: inherit;
+  z-index: var(--fold-zindex);
   background-color: var(--envelope-clr-bg-top);
+  background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.12), transparent);
   clip-path: polygon(0% 0%, 50% 55%, 100% 0%);
   transform: var(--fold-rotate);
   transform-origin: top;
-  transition: var(--duration) ease-in-out;
+  transition: transform var(--duration) ease-in-out;
   transition-delay: var(--fold-delay);
 }
 
+/* --- Hoja de la carta --- */
 .letter {
   position: absolute;
-  bottom: 5px;
+  bottom: 6px;
   left: 50%;
+  transform: translateX(-50%);
   width: 90%;
   height: var(--letter-height);
-  font-size: var(--letter-font-size);
-  transform: translateX(-50%);
-  background: var(--letter-clr-bg);
   z-index: 2;
-  padding: 2em 3em;
+
   display: flex;
   flex-direction: column;
-  gap: 1rem;
   align-items: center;
+  justify-content: flex-start; /* el contenido se queda en la zona visible */
+  gap: clamp(0.35rem, 1.8vw, 0.9rem);
+
+  padding: clamp(0.85rem, 3.2vw, 2rem) clamp(0.9rem, 4vw, 3rem) 0;
   text-align: center;
-  transition: var(--duration) ease-in-out;
-  transition-delay: var(--letter-delay);
+  font-size: var(--letter-font-size);
+  background:
+    linear-gradient(180deg, #fffdf8, var(--paper) 60%, #f6ece0);
+  border-radius: 3px;
+  box-shadow: 0 -6px 18px -8px rgba(0, 0, 0, 0.45);
   overflow: hidden;
+  transition: height var(--duration) cubic-bezier(0.34, 1.2, 0.5, 1);
+  transition-delay: var(--letter-delay);
 }
+
 .letter p {
   margin: 0;
-  font-weight: bold;
-  width: 32ch;
+  width: 100%;
+  max-width: 24ch;
+  font-weight: 700;
+  line-height: 1.45;
   color: var(--letter-clr-text);
+  text-wrap: balance;
+}
+
+/* Las imágenes se miden por ALTURA de la hoja: así nunca se desbordan */
+.custom-image,
+.custom-image2 {
+  flex: 0 0 auto;
+  width: auto;
+  object-fit: contain;
+  aspect-ratio: 1;
 }
 
 .custom-image {
-  width: 100px;
-  height: 100px;
-  object-fit: contain; 
+  height: 17%;
+  max-width: 40%;
+  mix-blend-mode: multiply;
 }
+
 .custom-image2 {
-  width: 150px;
-  height: 150px;
-  object-fit: contain; 
+  height: 30%;
+  max-width: 58%;
+  margin-top: 0.15em;
 }
 
 .highlight {
-  display: block; 
-  margin-top: 10px; 
-  font-size: 1.8rem;  
-  font-weight: bold; 
+  display: block;
+  margin-top: 0.35em;
+  font-family: "Dancing Script", cursive;
+  font-size: 1.85em;
+  font-weight: 700;
+  line-height: 1;
+  color: #d61a06;
 }
 
-.letter-button {
-  display: none; /* oculto hasta que la carta se abra */
-  margin-top: 15px;
-  padding: 10px 20px;
-  font-size: 16px;
-  font-weight: bold;
-  border: none;
-  border-radius: 20px;
-  background: linear-gradient(90deg, #ff8c00, #ffd700);
-  color: #000;
-  cursor: pointer;
-  box-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
-  transition: transform 0.2s ease;
-}
-
-.letter-button:hover {
-  transform: scale(1.1);
-}
-
-
-.button-container {
-  margin-top: 20px;
+/* ============================================================
+   TEXTOS DE AYUDA / ESTADO
+   ============================================================ */
+.hint,
+.status {
+  margin: 0;
+  font-size: clamp(0.8rem, 3.4vw, 1.05rem);
+  font-weight: 600;
+  letter-spacing: 0.08em;
   text-align: center;
+  transition: opacity 500ms ease;
 }
 
-.letter-button {
-  display: none; /* oculto hasta que la carta se abra */
-  padding: 10px 20px;
-  font-size: 16px;
-  font-weight: bold;
-  border: none;
-  border-radius: 20px;
-  background: linear-gradient(90deg, #ff8c00, #ffd700);
-  color: #000;
-  cursor: pointer;
-  box-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
-  transition: transform 0.2s ease, opacity 0.5s ease;
-  opacity: 0; /* para animación */
+.hint {
+  color: rgba(255, 233, 233, 0.75);
+  animation: breathe 2.6s ease-in-out infinite;
 }
 
-.letter-button {
-  display: none;
+.status {
+  position: absolute;
+  bottom: calc(env(safe-area-inset-bottom) + clamp(1.25rem, 5vh, 2.5rem));
+  left: 50%;
+  translate: -50% 0;
   opacity: 0;
+  pointer-events: none;
+  color: var(--gold-2);
+  text-shadow: 0 0 14px rgba(255, 215, 0, 0.45);
 }
 
-.envelope.open ~ .letter-button {
-  display: inline-block;
+.envelope.open ~ .hint {
+  opacity: 0;
+  animation: none; /* la animación pisaba el opacity */
+}
+
+.status.show {
   opacity: 1;
 }
 
+@keyframes breathe {
+  0%, 100% { opacity: 0.55; transform: translateY(0); }
+  50% { opacity: 1; transform: translateY(-3px); }
+}
 
-/*corazones lluvia*/
+/* ============================================================
+   TRANSICIÓN A LAS FLORES
+   ============================================================ */
+.page-fade {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: #000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 650ms ease;
+}
+
+.page-fade.show {
+  opacity: 1;
+}
+
+/* ============================================================
+   LLUVIA DE CORAZONES
+   ============================================================ */
 .heart {
   position: fixed;
-  top: -20px;
+  top: -8vh;
   font-size: 24px;
+  line-height: 1;
   color: red;
-  animation: fall 3s linear forwards;
   pointer-events: none;
+  will-change: transform, opacity;
+  animation: fall 3.2s linear forwards;
   z-index: 9999;
 }
 
 @keyframes fall {
-  to {
-    transform: translateY(110vh);
-    opacity: 0;
+  0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(118vh) rotate(160deg); opacity: 0; }
+}
+
+/* ============================================================
+   AJUSTES POR PANTALLA
+   ============================================================ */
+
+/* Teléfonos muy angostos */
+@media (max-width: 340px) {
+  .envelope {
+    --envelope-width: 92vw;
+    --letter-height-open: min(calc(var(--envelope-height) * 2.1), 58vh);
+    --letter-font-size: clamp(0.9rem, 4.2vw, 1.1rem);
   }
+}
+
+/* Teléfonos en horizontal / pantallas bajitas: todo más compacto */
+@media (max-height: 520px) {
+  .container { gap: 1rem; }
+  .envelope {
+    --envelope-height: clamp(96px, 30vh, 190px);
+    --envelope-width: min(72vw, calc(var(--envelope-height) * 1.9));
+    --letter-height-open: min(calc(var(--envelope-height) * 1.7), 62vh);
+    --letter-font-size: clamp(0.78rem, 2.4vh, 1.05rem);
+    --open-shift: 0px;
+  }
+  .envelope.open { --open-shift: clamp(0px, 4vh, 28px); }
+  .hint { font-size: 0.75rem; }
+}
+
+/* Tablet y escritorio */
+@media (min-width: 720px) {
+  .envelope {
+    --letter-height-open: min(calc(var(--envelope-height) * 1.8), 62vh);
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .envelope:not(.open):hover {
+    transform: translateY(-4px);
+  }
+}
+
+/* Accesibilidad: menos movimiento */
+@media (prefers-reduced-motion: reduce) {
+  .hint { animation: none; opacity: 0.85; }
+  .heart { display: none; }
+  .envelope { --duration: 500ms; }
 }
